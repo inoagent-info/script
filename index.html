@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+		<meta charset="utf-8">
+		<title>Конвертер PDF в JSON (Для реестра иноагентов)</title>
+		<style>
+			td {
+				white-space: pre;
+			}
+		</style>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+	</head>
+	<body>
+		<br>
+		<div class="container">
+			<div class="row">
+				<h3 align="center">Конвертер PDF в JSON (Для реестра иноагентов)</h3>
+
+				<div id="drop" class="mb-3">
+					<br>
+					<label for="pdf-file" class="form-label">Перетащите PDF сюда или нажмите</label>
+					<input class="form-control" type="file" id="pdf-file" />
+				</div>
+			</div>
+			<div class="row">
+				<div class="mb-3">
+					<label for="json-result" class="form-label">Результат</label>
+					<textarea class="form-control" id="json-result" style="width: 100%; height: 200px"></textarea>
+				</div>
+			</div>
+		</div>
+		
+
+		<!--<div style="border:1px solid">
+			<div id="drop">
+				<span>Перетащите PDF сюда</span>
+			</div>
+			<span>или нажмите </span>
+			<input type="file" id="pdf-file" />
+		</div>
+		<h2>Результат</h2>
+		<textarea id="json-result" style="width: 100%; height: 200px"></textarea>-->
+
+		<script src="build/pdf.js"></script>
+		<script src="pdf-table-extractor.js"></script>
+		<script id="script">
+			var drop = document.getElementById('drop');
+			function handleDrop(e) {
+				$('#json-result').text('Обработка...');
+				e.stopPropagation();
+				e.preventDefault();
+				var files = e.dataTransfer.files;
+				var f = files[0];
+				{
+					var reader = new FileReader();
+					var name = f.name;
+					reader.onload = function(e) {
+						var data = e.target.result;
+						$('#json-result').text('Парсинг PDF...');
+						parse_content(data); //btoa(arr));
+					};
+					reader.readAsArrayBuffer(f);
+				}
+			}
+
+			function handleFile(e) {
+				$('#json-result').text('Обработка...');
+				var files = e.target.files;
+				var f = files[0];
+				{
+					var reader = new FileReader();
+					var name = f.name;
+					reader.onload = function(e) {
+						var data = e.target.result;
+						$('#json-result').text('Парсинг PDF...');
+						parse_content(data); //btoa(arr));
+					};
+					reader.readAsArrayBuffer(f);
+				}
+			}
+			document.getElementById('pdf-file').addEventListener('change', handleFile, false);
+
+
+			function handleDragover(e) {
+				e.stopPropagation();
+				e.preventDefault();
+				e.dataTransfer.dropEffect = 'copy';
+			}
+
+			if(drop.addEventListener) {
+				drop.addEventListener('dragenter', handleDragover, false);
+				drop.addEventListener('dragover', handleDragover, false);
+				drop.addEventListener('drop', handleDrop, false);
+			}
+
+			pdf_table_extractor_progress = function(result){
+				$('#json-result').text("Парсинг PDF, прогресс: " + result.currentPages + " / " + result.numPages + " страниц");
+			};
+
+			var parse_content = function(content){
+				pdfjsLib.GlobalWorkerOptions.workerSrc = 'build/pdf.worker.js';
+				pdfjsLib.cMapUrl = 'https://mozilla.github.io/pdf.js/web/cmaps/';
+				pdfjsLib.cMapPacked = true;
+
+				var loadingTask = pdfjsLib.getDocument(content);
+
+				loadingTask.promise.then(pdf_table_extractor).then(function(result) {
+					// JSON output
+					let output = []
+
+					for(var j of result.pageTables) {
+						for(var i of j.tables) {
+							if(i[0] != "No п/п") {
+								let obj = {
+									id: i[0],
+									fullName: i[1],
+									dob: i[2],
+									ogrn: i[3],
+									inn: i[4],
+									regNum: i[5],
+									snils: i[6],
+									address: i[7],
+									resources: i[8],
+									members: i[9],
+									law: i[10],
+									dateIn: i[11],
+									datePubl: i[12],
+									dateOut: i[13]
+								}
+								output.push(obj)
+							}
+						}
+					}
+					document.getElementById('json-result').innerText = JSON.stringify(output);
+				});;
+			};
+		</script>
+	</body>
+</html>
