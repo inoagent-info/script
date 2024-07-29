@@ -1,4 +1,5 @@
-// modify from https://github.com/mozilla/pdf.js/blob/master/examples/node/pdf2svg.js
+// Модифицировано с https://github.com/mozilla/pdf.js/blob/master/examples/node/pdf2svg.js
+// Скрипт разработан автором проекта «Иноагент-Инфо», https://t.me/inoagentinfo
 pdf_table_extractor_progress = function(result){
 };
 

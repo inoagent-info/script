@@ -1,9 +1,13 @@
+<!--
+Скрипт разработан автором проекта «Иноагент-Инфо», https://t.me/inoagentinfo
+-->
+
 <!DOCTYPE html>
 <html>
 	<head>
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 		<meta charset="utf-8">
-		<title>Конвертер PDF в JSON (Для реестра иноагентов)</title>
+		<title>Скрипт «Иноагент-Инфо»</title>
 		<style>
 			td {
 				white-space: pre;
@@ -16,18 +20,20 @@
 		<br>
 		<div class="container">
 			<div class="row">
-				<h3 align="center">Конвертер PDF в JSON (Для реестра иноагентов)</h3>
+				<h3 align="center"><a href="https://t.me/inoagentinfo">Скрипт «Иноагент-Инфо»</a></h3>
 
 				<div id="drop" class="mb-3">
 					<br>
-					<label for="pdf-file" class="form-label">Перетащите PDF сюда или нажмите</label>
+					<label for="pdf-file" class="form-label">Перетащите .pdf-файл или нажмите</label>
 					<input class="form-control" type="file" id="pdf-file" />
 				</div>
 			</div>
 			<div class="row">
 				<div class="mb-3">
-					<label for="json-result" class="form-label">Результат</label>
+					<label for="json-result" class="form-label">Результат (для копирования)</label>
 					<textarea class="form-control" id="json-result" style="width: 100%; height: 200px"></textarea>
+					<button class="copy-btn" style="margin-top:20px;">Скопировать json-текст</button>
+					<p class="copy-alert" style="display: none; margin-top: 20px; color: green;">Скопировано в буфер обмена!</p>
 				</div>
 			</div>
 		</div>
@@ -136,6 +142,20 @@
 					document.getElementById('json-result').innerText = JSON.stringify(output);
 				});;
 			};
+			$(function() {
+				function copyToClipboard(element) {
+					var $temp = $("<input>");
+					$("body").append($temp);
+					$temp.val($(element).text()).select();
+					document.execCommand("copy");
+    				$temp.remove();
+				}
+ 
+				$(".copy-btn").on("click", function() {
+					copyToClipboard("#json-result");
+					$(".copy-alert").fadeIn("slow");
+  				});
+			});
 		</script>
 	</body>
 </html>
