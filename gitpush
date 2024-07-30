@@ -1,0 +1,12 @@
+#!/bin/bash
+
+if git status
+    then
+        echo "Статус выведен успешно, запускается скрипт"
+        sleep 5
+        git add .
+        git commit -m '⚙️ обновление через скрипт'
+        git push
+    else
+        echo "Измненений не найдено"
+fi
