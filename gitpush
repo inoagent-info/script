@@ -2,11 +2,15 @@
 
 if git status
     then
-        echo "Статус выведен успешно, запускается скрипт"
-        sleep 5
-        git add .
-        git commit -m '⚙️ обновление через скрипт'
-        git push
+    echo "Статус выведен успешно, запускается скрипт"
+    sleep 5
+    git add .
+    git commit -m '⚙️ обновление через скрипт'
+        if git push
+            then
+            sleep 3
+            echo "Успешное обновление"
+        fi
     else
         echo "Измненений не найдено"
 fi
